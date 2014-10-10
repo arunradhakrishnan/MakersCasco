@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Scheduler.h"
-//#include <Accelerometer.h>
+#include "Accelerometer.cpp"
 //#include <Wire.h>
 #include <string>
 #include <math.h>
