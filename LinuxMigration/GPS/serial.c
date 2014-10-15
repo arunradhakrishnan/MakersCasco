@@ -1,6 +1,7 @@
 #include "serial.h"
 
-static void uart_write(char* data, int size)
+
+void uart_write(char* data, int size)
 {
     int fd;	
 	fd=open("/dev/ttyMFD1", O_RDWR | O_NONBLOCK);
@@ -8,7 +9,7 @@ static void uart_write(char* data, int size)
 	close(fd);
 }
 
-static void uart_read(char* data, int size)
+void uart_read(char* data, int size)
 {
     int fd;	
 	fd=open("/dev/ttyMFD1", O_RDWR | O_NONBLOCK);
@@ -20,7 +21,7 @@ static void uart_read(char* data, int size)
 	close(fd);
 }
 
-static void uart_init (int baud)
+void uart_init (int baud)
 {
 	struct termios tio;
 	int fd;
@@ -52,29 +53,3 @@ static void uart_init (int baud)
 	close(fd);
 }
 
-int main(int argc, char *argv[])
-{
-	int ret = 0;
-	int fd;
-	char read_array[256]={};
-	
-	uart_init(9600);
-	printf("start: data from serial:%s\n",read_array);
-	uart_read(read_array,256);
-	printf("end: data from serial:%s\n",read_array);
-
-	return ret;
-}
-/*
-int main(int argc, char *argv[])
-{
-	int ret = 0;
-	int fd;
-	char test_array[10]={'0','1','2','3','4','5','6','7','8','9'};
-	
-	uart_init(9600);
-	while(1){
-		uart_write(test_array,10);
-	}
-	return ret;
-}*/

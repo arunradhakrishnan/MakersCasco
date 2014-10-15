@@ -438,7 +438,3 @@ float TinyGPS::radians(float coordinate){
 float TinyGPS::degrees(float coordinate){
   return coordinate*180/3.14159;
 }
-int main()
-{
-	return 0;
-}

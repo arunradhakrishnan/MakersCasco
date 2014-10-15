@@ -18,8 +18,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Scheduler.h"
-#include "Accelerometer.cpp"
-//#include <Wire.h>
+//#include "Accelerometer.h"
+#include "GPS.h"
 #include <string>
 #include <math.h>
 
@@ -131,13 +131,21 @@ float getAccelVector() {
     //dataX = accelerometer.x;
     //dataY = accelerometer.y;
     //dataZ = accelerometer.z;
-    vector = sqrt(dataX*dataX + dataY*dataY + dataZ*dataZ);
+    //vector = sqrt(dataX*dataX + dataY*dataY + dataZ*dataZ);
+    vector = 0;
 
   return vector; 
 }
 
 void refreshGPS() {
     //sendEdisonPackage("GPS", "");
+    GPS gps;
+    char gps_status = gps.getData();
+  
+    printf("gps_status:%c", gps_status);
+    printf("gps_latitude:%s", &gps.latitude);
+    printf("gps_longitude:%s", &gps.longitude);
+    printf("gps_altitude:%s", &gps.altitude);
     scheduler.schedule(refreshGPS, REFRESH_GPS_MS);
 }
 

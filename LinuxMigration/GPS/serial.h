@@ -8,6 +8,6 @@
 
 #define BAUD_RATE B9600
 
-static void uart_write(char* data, int size);
-static void uart_read(char* data, int size);
-static void uart_init (int baud);
+void uart_write(char*, int);
+void uart_read(char*, int);
+void uart_init (int);
