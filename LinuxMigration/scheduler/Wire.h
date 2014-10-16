@@ -6,22 +6,24 @@
 #define I2C1 0x00000000
 #define WIRE_INTERFACES_COUNT 1
 
+#include <stdlib.h>
+
 class TwoWire {
 public:
 	TwoWire(void(*begin_cb)(void));
 //	void begin();
-//	void begin(uint8_t);
+//	void begin(unsigned char);
 //	void begin(int);
-	void beginTransmission(uint8_t);
+	void beginTransmission(unsigned char);
 	void beginTransmission(int);
-	uint8_t endTransmission(void);
-	uint8_t endTransmission(uint8_t);
-	uint8_t requestFrom(uint8_t, uint8_t);
-	uint8_t requestFrom(uint8_t, uint8_t, uint8_t);
-	uint8_t requestFrom(int, int);
-	uint8_t requestFrom(int, int, int);
-	virtual size_t write(uint8_t);
-	virtual size_t write(const uint8_t *, size_t);
+	unsigned char endTransmission(void);
+	unsigned char endTransmission(unsigned char);
+	unsigned char requestFrom(unsigned char, unsigned char);
+	unsigned char requestFrom(unsigned char, unsigned char, unsigned char);
+	unsigned char requestFrom(int, int);
+	unsigned char requestFrom(int, int, int);
+	virtual size_t write(unsigned char);
+	virtual size_t write(const unsigned char *, size_t);
 	virtual int available(void);
 	virtual int read(void);
 	virtual int peek(void);
@@ -29,28 +31,28 @@ public:
 	void onReceive(void(*)(int));
 	void onRequest(void(*)(void));
 
-    inline size_t write(unsigned long n) { return write((uint8_t)n); }
-    inline size_t write(long n) { return write((uint8_t)n); }
-    inline size_t write(unsigned int n) { return write((uint8_t)n); }
-    inline size_t write(int n) { return write((uint8_t)n); }
+    inline size_t write(unsigned long n) { return write((unsigned char)n); }
+    inline size_t write(long n) { return write((unsigned char)n); }
+    inline size_t write(unsigned int n) { return write((unsigned char)n); }
+    inline size_t write(int n) { return write((unsigned char)n); }
 
 	void onService(void);
 
 private:
 	// RX Buffer
-	uint8_t rxBuffer[BUFFER_LENGTH];
-	uint8_t rxBufferIndex;
-	uint8_t rxBufferLength;
+	unsigned char rxBuffer[BUFFER_LENGTH];
+	unsigned char rxBufferIndex;
+	unsigned char rxBufferLength;
 
 	// TX Buffer
-	uint8_t txAddress;
-	uint8_t txBuffer[BUFFER_LENGTH];
-	uint8_t txBufferLength;
+	unsigned char txAddress;
+	unsigned char txBuffer[BUFFER_LENGTH];
+	unsigned char txBufferLength;
 
 	// Service buffer
-	uint8_t srvBuffer[BUFFER_LENGTH];
-	uint8_t srvBufferIndex;
-	uint8_t srvBufferLength;
+	unsigned char srvBuffer[BUFFER_LENGTH];
+	unsigned char srvBufferIndex;
+	unsigned char srvBufferLength;
 
 	// Callback user functions
 	void (*onRequestCallback)(void);
@@ -60,10 +62,10 @@ private:
 	void (*onBeginCallback)(void);
 
 	// Timeouts (
-	static const uint32_t RECV_TIMEOUT = 100000;
-	static const uint32_t XMIT_TIMEOUT = 100000;
+	static const unsigned int RECV_TIMEOUT = 100000;
+	static const unsigned int XMIT_TIMEOUT = 100000;
 
-	uint8_t adapter_nr;
+	unsigned char adapter_nr;
 	int i2c_fd;
 	int i2c_transfer;
 };

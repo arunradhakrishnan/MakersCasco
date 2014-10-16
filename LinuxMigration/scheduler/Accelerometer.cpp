@@ -12,27 +12,26 @@ Accelerometer::Accelerometer(){
 // Serial.println(parsedValues);
 
 void Accelerometer::setAccelerometerRegisterData(byte accelerometerRegister, byte data) {
-/*  Wire.beginTransmission(ACCELEROMETER_ADDRESS);
+  Wire.beginTransmission(ACCELEROMETER_ADDRESS);
   Wire.write(accelerometerRegister);
   Wire.write(data);
-  Wire.endTransmission();*/
+  Wire.endTransmission();
 }
 
 int Accelerometer::getAccelerometerRegisterData(byte accelerometerRegister) {
-/*  Wire.beginTransmission(ACCELEROMETER_ADDRESS);
+  Wire.beginTransmission(ACCELEROMETER_ADDRESS);
   Wire.write(accelerometerRegister);
   Wire.endTransmission();
 
   Wire.requestFrom(ACCELEROMETER_ADDRESS, ONE_BYTE, RELEASE);
-  return Wire.read();*/
-  return 0;
+  return Wire.read();
 }
 
 int Accelerometer::getAccelerometerRegisterData16(byte accelerometerRegister) {
   unsigned int LSB, MSB;
   int registerData = 0;
   
-/*  Wire.beginTransmission(ACCELEROMETER_ADDRESS);
+  Wire.beginTransmission(ACCELEROMETER_ADDRESS);
   Wire.write(accelerometerRegister);
   Wire.endTransmission();
 
@@ -44,7 +43,7 @@ int Accelerometer::getAccelerometerRegisterData16(byte accelerometerRegister) {
   else          registerData = 0x0;
   
   registerData |= LSB;
-  registerData |= MSB << 8;*/
+  registerData |= MSB << 8;
   
   return registerData;
 }

@@ -1,0 +1,6 @@
+Compile with:
+g++ -Wall -w -o helmet.out helmet_app.cpp GPS.cpp TinyGPS.cpp gas.cpp pwm.cpp gpio.cpp Accelerometer.cpp Wire.cpp  -lm
+
+Already implemented this in Makefile, please keep updated it.
+
+helmet.out is the executable file.

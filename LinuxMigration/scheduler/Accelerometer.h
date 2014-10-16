@@ -2,7 +2,7 @@
 #define ACCELEROMETER_H
 
 
-#include "Wire.cpp"
+#include "Wire.h"
 
 #define ACCELEROMETER_ADDRESS   0x1D    // Decimal 29
 #define POWER_CTL_REGISTER      0x2D    // Power-saving features control. Decimal 45
@@ -17,7 +17,7 @@
 #define IN_G      0       // 0 to deliver x,y,z acceleration m/s^2,  1 to deliver it in gravitational force (g)
 
 
-typedef char byte; 
+typedef unsigned char byte; 
 class Accelerometer {
 	public:
 		Accelerometer();
