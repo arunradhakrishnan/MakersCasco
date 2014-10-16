@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <title>Edison - Smart Helmet</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta charset="utf-8">
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBdGPEdJAqHvBUlP5HTn8e1ZxyHa6BaXnI&sensor=false">
+    </script>
+    <link rel="shortcut icon" type="image/png" href="public/img/favicon.png">
+    <link href="public/css/bootstrap-theme.css" rel ="stylesheet">
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+    <link href="public/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="public/css/theme.css" rel="stylesheet">
+    <script type="text/javascript" src="public/js/jquery-2.0.3.min.js"></script>
+   
+    <body>
+        <script type="text/javascript" src="public/js/jquery-2.0.3.min.js"></script>
+    	<script type="text/javascript" src="public/js/bootstrap.min.js"></script>
+
+        <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+             <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                 <a class="navbar-brand" href="../v1/">Smart Helmet</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="../v1/">Home</a></li>            
+                        <li><a href="../v1/helmets.html">Helmets</a></li>
+                        <li><a href="../v1/events.html">Events</a></li>
+                        <li class="active"><a href="../v1/map.html">Map</a></li>
+                        <li><a href="../v1/map_sim.html">Map Simulation</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container theme-showcase" role="main">
+            <div id="map-canvas" style="width: auto; height: 700px;"></div>
+        </div>
+       <script>
+            var map;
+            var marker;
+            var markers = [];
+            function init_locations() {  
+              $.get("api/locations.jsp")
+                .done(function(json) {
+                  gps_loc = $.parseJSON((JSON.stringify(json)));
+
+                  var mapOptions = {
+                   center : new google.maps.LatLng(gps_loc["0"].gps_latitude, gps_loc["0"].gps_longitude),
+                   zoom: 14
+                  };
+
+                  map = new google.maps.Map(document.getElementById("map-canvas"),
+                     mapOptions);
+
+                  refresh_locations(true);
+                  setInterval(function(){refresh_locations(false);}, 1000);
+                })
+                .fail(function() {
+                    alert('fail fetching locations');
+                });
+            }
+            
+            
+            function refresh_locations(animation) {
+                $.get("api/locations.jsp")
+                .done(function(json) {
+                    gps_loc = $.parseJSON((JSON.stringify(json)));
+            
+                    for (var i = 0; i < markers.length; i++) {
+                        markers[i].setMap(null);
+                    }
+
+                    for (var key in gps_loc) {
+                        var image= 'public/img/helmet.png';
+                        var latitude = gps_loc[key].gps_latitude;
+                        var longitude = gps_loc[key].gps_longitude;
+                        
+                        marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(latitude, longitude),
+                            map:map,
+                            animation: animation? google.maps.Animation.DROP: null,
+                            title: gps_loc[key].name,
+                            icon: image
+                        });
+                        markers.push(marker);
+                    }
+                })
+                .fail(function() {
+                  //  alert('fail fetching locations');
+                });
+            }
+            init_locations();
+         
+        </script> 
+    </body>
+</html>

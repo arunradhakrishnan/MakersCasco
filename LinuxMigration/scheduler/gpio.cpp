@@ -7,11 +7,11 @@ int read_gas_gpio() {
     gpio = 15;
     pinMode(gpio, INPUT);
     GPIOValue = digitalRead(gpio);
-    if (GPIOValue < -1) {
-        printf("Can't set gpio:%d .\n", gpio);
+//    if (GPIOValue < -1) {
+//        printf("Can't set gpio:%d .\n", gpio);
         unexportGPIO(gpio);
-        return -1;        
-    }
+//        return -1;        
+//    }
     return GPIOValue;
 }
 

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <title>Edison - Smart Helmet</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" type="image/png" href="public/img/favicon.png">
+    <link href="public/css/bootstrap-theme.css" rel ="stylesheet">
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+    <link href="public/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="public/css/theme.css" rel="stylesheet">
+    <script type="text/javascript" src="public/js/jquery-2.0.3.min.js"></script>
+    
+    <body>
+        <script type="text/javascript" src="public/js/jquery-2.0.3.min.js"></script>
+    	<script type="text/javascript" src="public/js/bootstrap.min.js"></script>
+
+        <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+             <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                 <a class="navbar-brand" href="../v1/">Smart Helmet</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="../v1/">Home</a></li>            
+                        <li><a href="../v1/helmets.html">Helmets</a></li>
+                        <li class="active"><a href="../v1/events.html">Events</a></li>
+                        <li><a href="../v1/map.html">Map</a></li>
+                        <li><a href="../v1/map_sim.html">Map Simulation</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container theme-showcase" role="main">
+            <div class="table-responsive">
+                <table class="table table-striped" id = "events">
+                    <thead>
+                        <tr>
+                            <th colspan="2"><center>Helmet</center></th>
+                            <th colspan="2"><center>Event</center></th>
+                            <th colspan="5"><center>GPS</center></th>
+                            <th>
+                        </tr>
+                        <tr>
+                            <th><center>MAC Address</center></th>
+                            <th><center>Name</center></th>
+                            <th><center>Type</center></th>
+                            <th><center>Value</center></th>
+                            <th><center>Status</center></th>
+                            <th><center>Latitude</center></th>
+                            <th><center>Longitude</center></th>
+                            <th><center>Altitude</center></th>
+                            <th></th>
+                            <th> Event Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <br />
+            <div id = "alertdiv">
+            </div>
+        </div>
+       <script>
+                var displayEvents = function(items) {
+                    $.get("api/events.jsp")
+                    .done(function(json) {
+                        items = $.parseJSON((JSON.stringify(json)));
+                        $("#events tbody").html("");   
+                        for (var key in items) {
+                            var urlMaps = 'http://maps.google.com/maps?q=' + items[key].gps_latitude + ',' + items[key].gps_longitude;
+                            var tr = $("<tr>");
+                            tr.attr('id', items[key].id);
+                            tr.addClass("tr-item");
+                            tr.append($("<td>").append(items[key].mac_address));
+                            tr.append($("<td>").append(items[key].name));
+                            tr.append($("<td>").append(items[key].event_type));
+                            tr.append($("<td>").append(items[key].value));
+                            tr.append($("<td>").append(items[key].gps_status));
+                            tr.append($("<td>").append(items[key].gps_latitude + ' °'));
+                            tr.append($("<td>").append(items[key].gps_longitude + ' °'));
+                            tr.append($("<td>").append(items[key].gps_altitude + ' m'));
+                            var map = '<img src = "public/img/map.png"/ width=25 height=25>';
+                            tr.append($("<td>").append($("<a>").attr('href',urlMaps).attr('target','_blank').append(map)));
+                            tr.append($("<td>").append(items[key].event_date));
+                            $("#events tbody").append(tr);
+                        }
+                    })
+                    .fail(function() {
+                    });
+                };
+
+                 setInterval(function(){displayEvents();}, 1000);
+            
+        </script> 
+    </body>
+</html>

@@ -11,10 +11,10 @@ int set_gas_pwm() {
         printf("\nNo PWMs found! (%s)\n", PWM_NPWM_FILE);
         return -1; 
     }      
-    if ((pwm + 1) < numberOfPWMs) {
-        printf("\nPWM channel was not foud! (%s)\n", PWM_NPWM_FILE);
-        return -1;
-    }
+   // if ((pwm + 1) < numberOfPWMs) {
+   //     printf("\nPWM channel was not found! (%s)\n", PWM_NPWM_FILE);
+   //     return -1;
+   // }
 
     /* Get the current mode of the GPIO associated with the selected
     ** PWM to re-establish it before ending the program. */
@@ -93,16 +93,17 @@ int set_gas_pwm() {
     * set to 50%, the output voltage will reach 2.5 volts; a duty cycle of 20%
     * will yield an output voltage of 1 volt; a duty cycle of 80% will yield
     * an output voltage of 4 #include <fcntl.h>volts, and so on.*/
-    unsigned int dutyCycle = 250;
-    do {
-        if (dutyCycle > 255) {    // The user opted to exit
-            disablePWM(pwm);
-            unexportPWM(pwm);
-            setGPIOMode(pwm, originalGPIOMode);
-            return 0;
-        }
-        analogWrite(pwm, dutyCycle);
-    } while (dutyCycle <= 255);
+    unsigned int dutyCycle = 3;
+    analogWrite(pwm, dutyCycle);
+//    do {
+//        if (dutyCycle > 255) {    // The user opted to exit
+//            disablePWM(pwm);
+//            unexportPWM(pwm);
+//            setGPIOMode(pwm, originalGPIOMode);
+//            return 0;
+//       }
+//        analogWrite(pwm, dutyCycle);
+//    } while (dutyCycle <= 255);
 }
 
 

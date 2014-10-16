@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>Edison - Smart Helmet</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" type="image/png" href="public/img/favicon.png">
+    <link href="public/css/bootstrap-theme.css" rel ="stylesheet">
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+    <link href="public/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="public/css/theme.css" rel="stylesheet">
+    <script type="text/javascript" src="public/js/jquery-2.0.3.min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript" src="public/js/jquery-2.0.3.min.js"></script>
+    	<script type="text/javascript" src="public/js/bootstrap.min.js"></script>
+
+        <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+             <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                 <a class="navbar-brand" href="../v1/">Smart Helmet</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="../v1/">Home</a></li>            
+                        <li class="active"><a href="../v1/helmets.html">Helmets</a></li>
+                        <li><a href="../v1/events.html">Events</a></li>
+                        <li><a href="../v1/map.html">Map</a></li>
+                        <li><a href="../v1/map_sim.html">Map Simulation</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container theme-showcase" role="main">
+            <div class="table-responsive">
+                <table class="table table-striped" id = "helmets">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>MAC Address</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Comments</th>
+                            <th>Creation Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <button id="btnCreateHelmet" class="btn btn-primary" type="button">Create Helmet</button>
+            </div>
+                <div class="modal fade" id="helmetModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="helmetModalTitle">Create Helmet</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label for="inputMAC" class="col-sm-2 control-label">MAC</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputMAC">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputName" class="col-sm-2 control-label">Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputName">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputPhone" class="col-sm-2 control-label">Phone</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputPhone">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputComments" class="col-sm-2 control-label">Comments</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputComments">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="btnCancelHelmet" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button id="btnSaveHelmet" type="button" class="btn btn-primary">Save</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            <br />
+            <div id = "alertdiv">
+            </div>
+        </div>
+        <script>
+                var displayHelmets = function(items) {
+                    $.get("api/helmets.jsp")
+                    .done(function(json) {
+                        items = $.parseJSON((JSON.stringify(json)));
+                        $("#helmets tbody").html("");   
+                        for (var key in items) { 
+                            var tr = $("<tr>");
+                            tr.attr('id', items[key].id);
+                            tr.addClass("tr-item");
+                            tr.append($("<td>").attr('data-id', items[key].id)
+                                .append($("<a>").attr('href', '#').append("H-"+items[key].id)));
+                            tr.append($("<td>").append(items[key].mac_address));
+                            tr.append($("<td>").append(items[key].name));
+                            tr.append($("<td>").append(items[key].phone));   
+                            tr.append($("<td>").append(items[key].comments));   
+                            tr.append($("<td>").append(items[key].creation_date));   
+                            tr.append($("<td>")
+                                .append($("<button>")
+                                .attr('type', 'button')
+                                .addClass("btn btn-sm btn-primary")
+                                .html('Edit')
+                                .click(function () {
+                                    $("#helmetModalTitle").html('Edit Helmet');
+
+                                    $(this).closest('tr').find('td:eq(0)').each(function () {
+                                        $("#helmetModalTitle").attr('data-id', $(this).attr('data-id'));
+                                    });
+                                    
+
+                                    $(this).closest('tr').find('td:eq(1)').each(function () {
+                                        $("#inputMAC").val($(this).text());
+                                    });
+
+                                    $(this).closest('tr').find('td:eq(2)').each(function () {
+                                        $("#inputName").val($(this).text());
+                                    });
+
+                                    $(this).closest('tr').find('td:eq(3)').each(function () {
+                                        $("#inputPhone").val($(this).text());
+                                    });
+                                    
+                                     $(this).closest('tr').find('td:eq(4)').each(function () {
+                                        $("#inputComments").val($(this).text());
+                                    });
+
+                                    $("#helmetModal").modal('show');
+                                }))
+                                .append(" ")
+                                .append($("<button>").attr('type', 'button').addClass("btn btn-sm btn-danger").html('Delete')
+                                    .click(function (){
+                                        var id;
+                                        $(this).closest('tr').find('td:eq(0)').each(function () {
+                                        id = $(this).attr('data-id');
+                                        });
+                                        $.ajax({
+                                                type: "GET",
+                                                url: "api/delete_helmet.jsp?id="+id,
+                                                contentType: "application/json; charset=utf-8",
+                                                data: id,
+                                                dataType : 'json'
+                                        })
+                                        .done(function(data) {
+                                            displayHelmets();
+                                            alert('Helmet ' + id + ' was deleted!')
+                                        })
+                                        .fail(function(data) {
+                                            alert(data);
+                                        })
+                                    })
+                                )
+                            );
+                            $("#helmets tbody").append(tr);
+                        }
+                    })
+                    .fail(function(error) {
+                         alert("createHelmets fail");
+                    });
+                };
+
+                $("#btnCreateHelmet").click(function () {
+                    $("#helmetModalTitle").html('Create Helmet');
+                    $("#inputMAC").val("");
+                    $("#inputName").val("");
+                    $("#inputPhone").val("");
+                    $("#inputComments").val("");
+                    $("#helmetModal").modal('show');
+                });
+                displayHelmets();
+                
+                $("#btnSaveHelmet").click(function () {                  
+                    $("#helmetModal").modal('hide');
+                    var newHelmet = JSON.stringify({ 
+                        mac_address: $("#inputMAC").val(), 
+                        name: $("#inputName").val(), 
+                        phone: $("#inputPhone").val(), 
+                        comments: $("#inputComments").val()
+                    });
+                    if($("#helmetModalTitle").html() === 'Create Helmet') {
+                        $.post("api/create_helmet.jsp", {"Helmet":newHelmet})
+                        .done(function(data){
+                            displayHelmets();
+                            alert('A new helmet was created!')
+                        })
+                        .fail(function(error) {
+                            alert("createHelmets fail");
+                        })
+                    } 
+                    else {
+                        var id = $("#helmetModalTitle").attr('data-id');
+                        $.post("api/edit_helmet.jsp?id=" + id, {"Helmet":newHelmet})
+                        .done(function(data) {
+                            displayHelmets();
+                            alert('Helmet ' + id + ' was edited!')
+                        })
+                        .fail(function(error) {
+                            alert("createHelmets fail. ");
+                        })
+                    }
+            })
+        </script>
+    </body>
+</html>
