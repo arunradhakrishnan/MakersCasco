@@ -22,6 +22,7 @@
 #include "gas.h"
 #include "Accelerometer.h"
 #include "GPS.h"
+#include "algoritmos.hpp"
 #include <string>
 #include <math.h>
 
@@ -32,6 +33,7 @@ using namespace std;
 Scheduler scheduler(1000);
 int exitCode=0;
 int wiFiTry = 0;
+NeuralNetwork net;
 //////////////////////////////////////////////////////////////////
 // Global Constants
 //////////////////////////////////////////////////////////////////
@@ -105,7 +107,8 @@ void setup()
     scheduler.schedule(&refreshAccelerometer, REFRESH_ACC_MS);
     scheduler.schedule(&refreshGas, REFRESH_GAS_MS);
     scheduler.schedule(setupWifi, DELAY_SETUP_WIFI);
-    init_gas_sensor(); 
+    init_gas_sensor();
+    net.initNN("algoritmos.net"); 
 }
 
 void loop()
@@ -241,29 +244,20 @@ void postJson(string json) {
 }
 
 int neuralNetwork(float  *buffer)
-{ /*
-    float fallTreshold, strikeTreshold;
-    FILE * dataFile = fopen("neuralInput.txt", "w");  
-    for(int count = 0 ; count < NN_INPUTSIZE ; count++) {      
-        if (dataFile) {
-            fprintf(dataFile, "%f " , buffer[count]);
-            //Serial.println(buffer[count]);
-        }      
-    }
-    fclose(dataFile);
-    
-    system("./smartHelmetAlgNN");
-    FILE * resultFile = fopen("neuralOutput.txt", "r");    
-    fscanf(resultFile, "%f %f", &fallTreshold, &strikeTreshold);   
-    //Serial.println("fallTreshold");
-    //Serial.println(fallTreshold);
-    //Serial.println("strikeTreshold"); 
-    //Serial.println(strikeTreshold); 
-    if ((fallTreshold > strikeTreshold) && (fallTreshold > 0.8)) {
-      return 1;
-    }
-    if((fallTreshold < strikeTreshold) && (strikeTreshold > 0.8)) {
-      return 2;
-    } */
-    return 0;
+{ 
+  float fallTreshold, strikeTreshold, *calc_out;
+  
+  
+  
+  calc_out = net.run(buffer);
+  
+  fallTreshold   = calc_out[0];
+  strikeTreshold = calc_out[1]; 
+  if ((fallTreshold > strikeTreshold) && (fallTreshold > 0.8)) {
+    return 1;
+  }
+  if((fallTreshold < strikeTreshold) && (strikeTreshold > 0.8)) {
+    return 2;
+  } 
+  return 0;
 }
