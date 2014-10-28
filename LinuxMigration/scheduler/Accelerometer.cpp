@@ -1,50 +1,44 @@
 #include "Accelerometer.h"
 
-Accelerometer::Accelerometer(){
-	setAccelerometerRegisterData(POWER_CTL_REGISTER, 0x08);
+I2C i2c;
+
+Accelerometer::Accelerometer() {
+
 }
 
-// The code in loop() shows how to use the getData function
-// Use getData() in your code, just pass it a char[30] variable
-// Usage: 
-// char parsedValues[30] = "";
-// getData(parsedValues);
-// Serial.println(parsedValues);
+void Accelerometer::setup() {
+	setAccelerometerRegisterData(POWER_CTL_REGISTER, 0x00);                 // Go into standby mode to configure the device
+	setAccelerometerRegisterData(DATA_FORMAT_REGISTER, 0x03);               // ±16 g, 10-bit resolution
+	setAccelerometerRegisterData(THRESH_ACT_REGISTER, THRESH_ACT_VALUE);    // 62.5 mg per unit (62.5mg/LSB)
+	setAccelerometerRegisterData(FIFO_CTL_REGISTER, 0x80);                  // Hold the last 32 data values and overwrite the oldest data when full
+	setAccelerometerRegisterData(POWER_CTL_REGISTER, 0x08);                 // Start measurement
+}
 
 void Accelerometer::setAccelerometerRegisterData(byte accelerometerRegister, byte data) {
-  Wire.beginTransmission(ACCELEROMETER_ADDRESS);
-  Wire.write(accelerometerRegister);
-  Wire.write(data);
-  Wire.endTransmission();
-}
-
-int Accelerometer::getAccelerometerRegisterData(byte accelerometerRegister) {
-  Wire.beginTransmission(ACCELEROMETER_ADDRESS);
-  Wire.write(accelerometerRegister);
-  Wire.endTransmission();
-
-  Wire.requestFrom(ACCELEROMETER_ADDRESS, ONE_BYTE, RELEASE);
-  return Wire.read();
+  i2c.beginTransmission();
+  i2c.setI2CRegister(ACCELEROMETER_ADDRESS, accelerometerRegister, data);
+  i2c.endTransmission();
 }
 
 int Accelerometer::getAccelerometerRegisterData16(byte accelerometerRegister) {
-  unsigned int LSB, MSB;
+  unsigned int LSB = 0;
+  unsigned int MSB = 0;
   int registerData = 0;
-  
-  Wire.beginTransmission(ACCELEROMETER_ADDRESS);
-  Wire.write(accelerometerRegister);
-  Wire.endTransmission();
+  unsigned char value;
 
-  Wire.requestFrom(ACCELEROMETER_ADDRESS, TWO_BYTES, RELEASE);
-  LSB = Wire.read();
-  MSB = Wire.read();
-  
+  i2c.beginTransmission();
+  i2c.getI2CRegister(ACCELEROMETER_ADDRESS, accelerometerRegister, &value);
+  LSB = value;
+  i2c.getI2CRegister(ACCELEROMETER_ADDRESS, accelerometerRegister + 1, &value);
+  MSB = value;
+  i2c.endTransmission();
+
   if (MSB >> 7) registerData = 0xFFFF0000;
   else          registerData = 0x0;
-  
+
   registerData |= LSB;
   registerData |= MSB << 8;
-  
+
   return registerData;
 }
 
@@ -55,15 +49,14 @@ void Accelerometer::getData() {
   yValueRead = getAccelerometerRegisterData16(DATAY0_REGISTER);
   zValueRead = getAccelerometerRegisterData16(DATAZ0_REGISTER);
 
-  if (IN_G) {  
-    x = xValueRead * 0.004;
-    y = yValueRead * 0.004;
-    z = zValueRead * 0.004;
+  if (IN_G) {
+    x = xValueRead * SCALE_FACTOR;
+    y = yValueRead * SCALE_FACTOR;
+    z = zValueRead * SCALE_FACTOR;
   } else {
-    x = xValueRead * 0.004 * 9.80665;
-    y = yValueRead * 0.004 * 9.80665;
-    z = zValueRead * 0.004 * 9.80665;
+    x = xValueRead * SCALE_FACTOR * STANDARD_GRAVITY;
+    y = yValueRead * SCALE_FACTOR * STANDARD_GRAVITY;
+    z = zValueRead * SCALE_FACTOR * STANDARD_GRAVITY;
   }
 }
-
 
