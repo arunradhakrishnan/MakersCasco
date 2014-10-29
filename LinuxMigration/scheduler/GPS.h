@@ -30,26 +30,11 @@
 
 const unsigned char PRECISION = 4;    // Number of decimals used in messages
 
-// GPS data will be continuously parsed during this amount of milliseconds
-const long PARSE_TIME = 1000;
-
 int test_function();
 char gps_get_data();
 void uart_write(char*, int);
 void uart_read(char*, int);
 void uart_init (int);
-/*
-class GPS {
-	public:
-		GPS();
-		char getData();
-		char latitude [10];
-		char longitude [10];
-		char altitude[10];
-	private:
-		TinyGPS GPSDevice;
-		int itsAGPRMCMessage;
-		char dataStatus;	// A = valid data, V = invalid data
-};*/
 
 #endif
+

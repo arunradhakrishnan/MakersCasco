@@ -1,4 +1,3 @@
-
 #include "GPS.h"
 #define _GPRMC_TERM "GPRMC"
 
@@ -16,26 +15,25 @@ int test_function() {
 char gps_get_data() {
     float lat, lon = 0.0;
     unsigned long fixAge = 0;
-    char uart_buffer[256]={};
+    char uart_buffer[512] = {};
     int ctr = 0;
 
     uart_init(9600);// The default baud rate for this GPS device is 9600
 
-    for (unsigned long initialTime = millis(); millis() - initialTime < PARSE_TIME;)
-        uart_read(uart_buffer,256);
-        while (uart_buffer[ctr] != NULL){
-            char charRead = uart_buffer[ctr];
-            GPSDevice.encode(charRead);
-            if ((charRead == ',') && (GPSDevice._term_number == 1)) {
-                itsAGPRMCMessage = !GPSDevice.gpsstrcmp(GPSDevice._term, _GPRMC_TERM);
-            }
-
-            if ((charRead == 'A' || charRead == 'V') && itsAGPRMCMessage) {
-                dataStatus = charRead;
-                itsAGPRMCMessage = 0;
-            }
-            ctr++;
+    uart_read(uart_buffer, sizeof(uart_buffer));
+    while (uart_buffer[ctr] != NULL){
+        char charRead = uart_buffer[ctr];
+        GPSDevice.encode(charRead);
+        if ((charRead == ',') && (GPSDevice._term_number == 1)) {
+            itsAGPRMCMessage = !GPSDevice.gpsstrcmp(GPSDevice._term, _GPRMC_TERM);
         }
+
+        if ((charRead == 'A' || charRead == 'V') && itsAGPRMCMessage) {
+            dataStatus = charRead;
+            itsAGPRMCMessage = 0;
+        }
+        ctr++;
+    }
     GPSDevice.f_get_position(&lat, &lon, &fixAge);
     printf("lat: %.4f\t", lat);
     printf("lon: %.4f\t", lon);
@@ -56,7 +54,7 @@ void uart_write(char* data, int size)
 void uart_read(char* data, int size)
 {
     int fd;	
-	fd=open("/dev/ttyMFD1", O_RDWR | O_NONBLOCK);
+  fd = open("/dev/ttyMFD1", O_RDONLY);
 	read(fd,data,size);
 	close(fd);
 }
