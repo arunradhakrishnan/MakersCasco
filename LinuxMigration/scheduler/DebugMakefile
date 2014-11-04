@@ -8,7 +8,7 @@ OBJECTS = helmet_app.cpp GPS.cpp TinyGPS.cpp gas.cpp pwm.cpp gpio.cpp Accelerome
 EXEC = helmet.out
 
 # The flags to use for compilation                                    
-PREFIX_FLAGS = -w
+PREFIX_FLAGS = -w -ggdb
 POSFIX_FLAGS = -lfann -lm
 
 # The code compiler to use for compilation                            

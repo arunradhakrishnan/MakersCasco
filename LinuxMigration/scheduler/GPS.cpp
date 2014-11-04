@@ -6,14 +6,14 @@ static int itsAGPRMCMessage = 0;
 static char dataStatus = 'V';  // A = valid data, V = invalid data
 
 int test_function() {
+    float lat, lon, alt;
     while(1) {
-        gps_get_data();   
+        gps_get_data(&lat, &lon, &alt);   
     }
     return 1;
 }
 
-char gps_get_data() {
-    float lat, lon = 0.0;
+char gps_get_data(float* lat, float* lon, float* alt) {
     unsigned long fixAge = 0;
     char uart_buffer[512] = {};
     int ctr = 0;
@@ -34,10 +34,11 @@ char gps_get_data() {
         }
         ctr++;
     }
-    GPSDevice.f_get_position(&lat, &lon, &fixAge);
-    printf("lat: %.4f\t", lat);
-    printf("lon: %.4f\t", lon);
-    printf("alt: %.1f\t", GPSDevice.f_altitude());
+    GPSDevice.f_get_position(lat, lon, &fixAge);
+	*alt = GPSDevice.f_altitude();
+    printf("lat: %.4f\t", *lat);
+    printf("lon: %.4f\t", *lon);
+    printf("alt: %.1f\t", *alt);
     printf("sta: %c\n", dataStatus);
 
     return dataStatus;

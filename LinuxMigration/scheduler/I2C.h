@@ -27,12 +27,10 @@
 
 class I2C {
 	public:
-//		void beginTransmission();
-    int beginTransmission();
+    		int beginTransmission();
 		void endTransmission();
 		int getI2CRegister(unsigned char, unsigned char, unsigned char*);
 		int setI2CRegister(unsigned char, unsigned char, unsigned char);
-//		int i2cDeviceFileDescriptor;
 	private:
     int i2cDeviceFileDescriptor;
     int originalGPIOModeSCL = 0;

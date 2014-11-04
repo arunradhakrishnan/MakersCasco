@@ -31,7 +31,7 @@
 const unsigned char PRECISION = 4;    // Number of decimals used in messages
 
 int test_function();
-char gps_get_data();
+char gps_get_data(float* lat, float* lon, float* alt);
 void uart_write(char*, int);
 void uart_read(char*, int);
 void uart_init (int);
