@@ -24,17 +24,18 @@ void I2C::endTransmission() {
   close(i2cDeviceFileDescriptor);
 }
 
-int I2C::getI2CRegister(unsigned char addr,
+int I2C::getI2CRegister16(unsigned char addr,
 	                      unsigned char reg,
-	                      unsigned char *val) {
-	unsigned char inbuf;
+	                      unsigned char *lsb,
+                        unsigned char *msb) {
+	unsigned char inbuf[2];
 	unsigned char outbuf;
 	struct i2c_rdwr_ioctl_data packets;
 	struct i2c_msg messages[2];
 
 	/* In order to read a register, we first do a "dummy write" by writing
 	* 0 bytes to the register we want to read from.  This is similar to
-	* the packet in set_i2c_register, except it's 1 byte rather than 2.
+	* the packet in setI2Cegister, except it's 1 byte rather than 2.
 	*/
 	outbuf = reg;
 	messages[0].addr = addr;
@@ -42,15 +43,17 @@ int I2C::getI2CRegister(unsigned char addr,
 	messages[0].len = sizeof(outbuf);
 	messages[0].buf = &outbuf;
 
-	// The data will get returned in this structure
+	// The data will get returned in this structure. Two consecutive bytes are
+  // going to be read, the first one in inbuf[0], and the second one in
+  // inbuf[1]. We only need to pass the address of the first byte in the array.
 	messages[1].addr = addr;
 	messages[1].flags = I2C_M_RD;
 	messages[1].len = sizeof(inbuf);
-	messages[1].buf = &inbuf;
+	messages[1].buf = &inbuf[0];
 
 	// Send the request to the kernel and get the result back
 	packets.msgs = messages;
-	packets.nmsgs = 2;
+	packets.nmsgs = 2;    // Number of bytes are to be read
 
   int returnCode = ioctl(i2cDeviceFileDescriptor, I2C_RDWR, &packets);
   if (returnCode < 0) {
@@ -58,7 +61,8 @@ int I2C::getI2CRegister(unsigned char addr,
 		return returnCode;
 	}
 
-  *val = inbuf;
+  *lsb = inbuf[0];
+  *msb = inbuf[1];
 
 	return 0;
 }

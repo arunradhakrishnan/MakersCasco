@@ -29,7 +29,7 @@ class I2C {
 	public:
     		int beginTransmission();
 		void endTransmission();
-		int getI2CRegister(unsigned char, unsigned char, unsigned char*);
+		int getI2CRegister16(unsigned char, unsigned char, unsigned char*, unsigned char*);
 		int setI2CRegister(unsigned char, unsigned char, unsigned char);
 	private:
     int i2cDeviceFileDescriptor;

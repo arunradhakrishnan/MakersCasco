@@ -1,4 +1,4 @@
-#include "Accelerometer.h"
+﻿#include "Accelerometer.h"
 
 I2C i2c;
 
@@ -24,14 +24,15 @@ int Accelerometer::getAccelerometerRegisterData16(byte accelerometerRegister) {
   unsigned int LSB = 0;
   unsigned int MSB = 0;
   int registerData = 0;
-  unsigned char value;
+  unsigned char lsb = 0;
+  unsigned char msb = 0;
 
   i2c.beginTransmission();
-  i2c.getI2CRegister(ACCELEROMETER_ADDRESS, accelerometerRegister, &value);
-  LSB = value;
-  i2c.getI2CRegister(ACCELEROMETER_ADDRESS, accelerometerRegister + 1, &value);
-  MSB = value;
+  i2c.getI2CRegister16(ACCELEROMETER_ADDRESS, accelerometerRegister, &lsb, &msb);
   i2c.endTransmission();
+
+  LSB = lsb;
+  MSB = msb;
 
   if (MSB >> 7) registerData = 0xFFFF0000;
   else          registerData = 0x0;
@@ -43,7 +44,9 @@ int Accelerometer::getAccelerometerRegisterData16(byte accelerometerRegister) {
 }
 
 void Accelerometer::getData() {
-  int xValueRead, yValueRead, zValueRead;
+  int xValueRead = 0;
+  int yValueRead = 0;
+  int zValueRead = 11;
 
   xValueRead = getAccelerometerRegisterData16(DATAX0_REGISTER);
   yValueRead = getAccelerometerRegisterData16(DATAY0_REGISTER);
