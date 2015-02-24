@@ -1,12 +1,7 @@
-Compile with:
-g++ -Wall -w -o helmet.out helmet_app.cpp GPS.cpp TinyGPS.cpp gas.cpp
-pwm.cpp gpio.cpp Accelerometer.cpp Wire.cpp  -lm
+Compilation:
 
 Already implemented this in Makefile, please keep updated it.
 
-helmet.out is the executable file.
+wrist.out is the executable file.
 
-Neural Network is needed to compile correctly, please follow READMENeuralNetwork
-
-The python library called: Boto is needed to can connect the helmet with server,
-it compiles but wont send any package without it.
+This is a working template project to work with Intel Edison using this ADC: https://www.sparkfun.com/products/13046
