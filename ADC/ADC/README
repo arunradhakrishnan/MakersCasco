@@ -1,0 +1,12 @@
+Compile with:
+g++ -Wall -w -o helmet.out helmet_app.cpp GPS.cpp TinyGPS.cpp gas.cpp
+pwm.cpp gpio.cpp Accelerometer.cpp Wire.cpp  -lm
+
+Already implemented this in Makefile, please keep updated it.
+
+helmet.out is the executable file.
+
+Neural Network is needed to compile correctly, please follow READMENeuralNetwork
+
+The python library called: Boto is needed to can connect the helmet with server,
+it compiles but wont send any package without it.
